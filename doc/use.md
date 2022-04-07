@@ -7,9 +7,7 @@
 ## 0x00 概述
 
 
-
 注解系列
-
 
 
 -   [注解基础](https://link.juejin.cn/?target=https%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMzU5OTgzNzM0NA%3D%3D%26mid%3D100000012%26idx%3D1%26sn%3Dea419145d678c6a39c3981cb8512b219%26scene%3D19%26token%3D1145503795%26lang%3Dzh_CN%23wechat_redirect)
@@ -32,15 +30,13 @@
 
 ```
 compile 'com.squareup:javapoet:1.7.0'
-复制代码
+
 ```
 
 javapoet 是用来生成代码的，需要借助
 
 
-
 常用类
-
 
 
 使用 javapoet 前需要了解 8 个常用类
@@ -60,15 +56,11 @@ javapoet 是用来生成代码的，需要借助
 
 
 
-除此之外 JavaPoet 提供了一套自定义的字符串格式化规则，常用的有
 
-![img](https://raw.githubusercontent.com/hhhaiai/Picture/main/img/202204071439605)
 
- S,
+除此之外 JavaPoet提供了一套自定义的字符串格式化规则，常用的有<img src="https://raw.githubusercontent.com/hhhaiai/Picture/main/img/202204071444847.png" alt="image-20220407144424817" style="zoom:60%;" />
 
-![img](https://raw.githubusercontent.com/hhhaiai/Picture/main/img/202204071439811)
 
-N
 
 
 
@@ -84,7 +76,6 @@ N
 
 
 ## 0x02 使用进阶
-
 
 
 下面由浅入深，循序渐进的说明用法
@@ -107,7 +98,7 @@ MethodSpec main = MethodSpec.methodBuilder("main")
         + "  total += i;\n"
         + "}\n")
     .build();
-复制代码
+
 ```
 
 生成的是
@@ -121,7 +112,7 @@ void main() {
     total += i;
   }
 }
-复制代码
+
 ```
 
 要是需要 import 的方法，如上面的`.addStatement("$T.out.println($S)", System.class, "Hello, JavaPoet!")` 就需要使用`.addStatement`来声明
@@ -147,7 +138,7 @@ MethodSpec main = MethodSpec.methodBuilder("main")
     .addStatement("total += i")
     .endControlFlow()
     .build();
-复制代码
+
 ```
 
 占位符
@@ -161,7 +152,6 @@ javapoet 里面提供了占位符来帮助我们更好地生成代码
 -   $L 字面常量（Literals）
 
 
-
 ```
 private MethodSpec computeRange(String name, int from, int to, String op) {
   return MethodSpec.methodBuilder(name)
@@ -173,7 +163,7 @@ private MethodSpec computeRange(String name, int from, int to, String op) {
       .addStatement("return result")
       .build();
 }
-复制代码
+
 ```
 
 这个就是一个 for 循环，op 负责加减乘除等符号
@@ -207,7 +197,7 @@ JavaFile javaFile = JavaFile.builder("com.example.helloworld", helloWorld)
 
 javaFile.writeTo(System.out);
 
-复制代码
+
 ```
 
 生成的代码如下，而且会自动导包
@@ -224,7 +214,7 @@ public final class HelloWorld {
     return new Date();
   }
 }
-复制代码
+
 ```
 
 -   $N 命名 (Names), 通常指我们自己生成的方法名或者变量名等等
@@ -246,7 +236,7 @@ public String byteToHex(int b) {
 public char hexDigit(int i) {
   return (char) (i < 10 ? i + '0' : i - 10 + 'a');
 }
-复制代码
+
 ```
 
 我们可以传递`hexDigit()`来代替。
@@ -268,7 +258,7 @@ MethodSpec byteToHex = MethodSpec.methodBuilder("byteToHex")
     .addStatement("result[1] = $N(b & 0xf)", hexDigit)
     .addStatement("return new String(result)")
     .build();
-复制代码
+
 ```
 
 获取对应类
@@ -301,7 +291,7 @@ MethodSpec beyond = MethodSpec.methodBuilder("beyond")
     .addStatement("result.add(new $T())", hoverboard)
     .addStatement("return result")
     .build();
-复制代码
+
 ```
 
 然后生成
@@ -324,7 +314,7 @@ public final class HelloWorld {
     return result;
   }
 }
-复制代码
+
 ```
 
 构建类的元素
@@ -348,7 +338,7 @@ TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
     .addMethod(flux)
     .build();
-复制代码
+
 ```
 
 这将会生成如下代码
@@ -360,7 +350,7 @@ public abstract class HelloWorld {
   protected abstract void flux();
 }
 
-复制代码
+
 ```
 
 当然 Methods 需要和`MethodSpec.Builder`配置来增加方法参数、异常、javadoc、注解等。
@@ -387,7 +377,7 @@ TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addField(String.class, "greeting", Modifier.PRIVATE, Modifier.FINAL)
     .addMethod(flux)
     .build();
-复制代码
+
 ```
 
 将会生成
@@ -402,7 +392,7 @@ public class HelloWorld {
     this.greeting = greeting;
   }
 }
-复制代码
+
 ```
 
 -   参数 (重要)
@@ -422,7 +412,7 @@ MethodSpec welcomeOverlords = MethodSpec.methodBuilder("welcomeOverlords")
     .addParameter(android)
     .addParameter(String.class, "robot", Modifier.FINAL)
     .build();
-复制代码
+
 ```
 
 生成的代码
@@ -432,7 +422,7 @@ MethodSpec welcomeOverlords = MethodSpec.methodBuilder("welcomeOverlords")
 ```
 void welcomeOverlords(final String android, final String robot) {
 }
-复制代码
+
 ```
 
 稍微复杂点的类型 比如泛型 、Map 之类的，需要了解下 JavaPoet 定义的几种专门描述类型的类
@@ -486,7 +476,7 @@ void welcomeOverlords(final String android, final String robot) {
      */
     ParameterSpec rootParamSpec = ParameterSpec.builder(inputMapTypeOfRoot, "routes").build();
     ParameterSpec groupParamSpec = ParameterSpec.builder(inputMapTypeOfGroup, "atlas").build();
-复制代码
+
 ```
 
 生成参数类型
@@ -512,7 +502,7 @@ public class ARouter$$Group$$service implements IRouteGroup {
   }
 }
 
-复制代码
+
 ```
 
 -   字段
@@ -533,7 +523,7 @@ TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
     .addField(android)
     .addField(String.class, "robot", Modifier.PRIVATE, Modifier.FINAL)
     .build();
-复制代码
+
 ```
 
 然后生成代码
@@ -546,7 +536,7 @@ public class HelloWorld {
 
   private final String robot;
 }
-复制代码
+
 ```
 
 通常 Builder 可以更加详细的创建字段的内容，比如 javadoc、annotations 或者初始化字段参数等，如：
@@ -558,7 +548,7 @@ FieldSpec android = FieldSpec.builder(String.class, "android")
     .addModifiers(Modifier.PRIVATE, Modifier.FINAL)
     .initializer("$S + $L", "Lollipop v.", 5.0d)
     .build();
-复制代码
+
 ```
 
 对应生成的代码
@@ -567,7 +557,7 @@ FieldSpec android = FieldSpec.builder(String.class, "android")
 
 ```
 private final String android = "Lollipop v." + 5.0;
-复制代码
+
 ```
 
 -   接口
@@ -593,7 +583,7 @@ TypeSpec helloWorld = TypeSpec.interfaceBuilder("HelloWorld")
         .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
         .build())
     .build();
-复制代码
+
 ```
 
 生成的代码如下
@@ -606,7 +596,7 @@ public interface HelloWorld {
 
   void beep();
 }
-复制代码
+
 ```
 
 -   继承父类 实现接口
@@ -622,7 +612,7 @@ package com.test.javapoet;
 public interface TestInterface<T> {
     void test(T testPara);
 }
-复制代码
+
 ```
 
 父类代码
@@ -633,7 +623,7 @@ public interface TestInterface<T> {
 public class TestExtendesClass {
 
 }
-复制代码
+
 ```
 
 使用 javapoet 实现接口并且继承父类
@@ -666,7 +656,7 @@ final ClassName  InterfaceName = ClassName.get("com.test.javapoet","TestInterfac
     JavaFile file = JavaFile.builder("com.zs.javapoet", typeSpec).build();
     file.writeTo(System.out);
 
-复制代码
+
 ```
 
 生成代码
@@ -685,7 +675,7 @@ package com.test.javapoet;
         System.out.println(hello);
       }
     }
-复制代码
+
 ```
 
 -   枚举类型
@@ -703,7 +693,7 @@ TypeSpec helloWorld = TypeSpec.enumBuilder("Roshambo")
     .addEnumConstant("SCISSORS")
     .addEnumConstant("PAPER")
     .build();
-复制代码
+
 ```
 
 生成的代码
@@ -718,7 +708,7 @@ public enum Roshambo {
 
   PAPER
 }
-复制代码
+
 ```
 
 更复杂的类型也可以支持，如重写、注解等
@@ -745,7 +735,7 @@ TypeSpec helloWorld = TypeSpec.enumBuilder("Roshambo")
         .addStatement("this.$N = $N", "handsign", "handsign")
         .build())
     .build();
-复制代码
+
 ```
 
 生成代码
@@ -771,7 +761,7 @@ public enum Roshambo {
     this.handsign = handsign;
   }
 }
-复制代码
+
 ```
 
 -   匿名内部类
@@ -801,7 +791,7 @@ TypeSpec helloWorld = TypeSpec.classBuilder("HelloWorld")
         .addStatement("$T.sort($N, $L)", Collections.class, "strings", comparator)
         .build())
     .build();
-复制代码
+
 ```
 
 生成代码
@@ -817,7 +807,7 @@ void sortByLength(List<String> strings) {
     }
   });
 }
-复制代码
+
 ```
 
 定义匿名内部类的一个特别棘手的问题是参数的构造。在上面的代码中我们传递了不带参数的空字符串。TypeSpec.anonymousClassBuilder("")。
@@ -839,7 +829,7 @@ MethodSpec toString = MethodSpec.methodBuilder("toString")
     .addModifiers(Modifier.PUBLIC)
     .addStatement("return $S", "Hoverboard")
     .build();
-复制代码
+
 ```
 
 生成代码
@@ -851,7 +841,7 @@ MethodSpec toString = MethodSpec.methodBuilder("toString")
   public String toString() {
     return "Hoverboard";
   }
-复制代码
+
 ```
 
 通过`AnnotationSpec.builder()` 可以对注解设置属性：
@@ -868,7 +858,7 @@ MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
     .addParameter(LogRecord.class, "logRecord")
     .returns(LogReceipt.class)
     .build();
-复制代码
+
 ```
 
 代码生成如下
@@ -881,7 +871,7 @@ MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
     userAgent = "Square Cash"
 )
 LogReceipt recordEvent(LogRecord logRecord);
-复制代码
+
 ```
 
 注解同样可以注解其他注解，通过 $L 引用如
@@ -904,7 +894,6 @@ MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
     .addParameter(LogRecord.class, "logRecord")
     .returns(LogReceipt.class)
     .build();
-复制代码
 ```
 
 生成代码
@@ -917,7 +906,7 @@ MethodSpec logRecord = MethodSpec.methodBuilder("recordEvent")
     @Header(name = "User-Agent", value = "Square Cash")
 })
 LogReceipt recordEvent(LogRecord logRecord);
-复制代码
+
 ```
 
 注释
